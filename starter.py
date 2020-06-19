@@ -251,7 +251,7 @@ def searcher(sdriver):
     print('')
 
     # Ladne wypisanie hashtagow w konsoli
-    JSONstarter = '{"pTARGET": "' + hashtag + '","SCRAPPER":['
+    JSONstarter = '{"TARGET": "' + hashtag + '","SCRAPER":['
     JSONplus = ''
     JSONnext = ','
     JSONend = ']}'
@@ -300,6 +300,9 @@ def searcher(sdriver):
 
 def JSONcreator(cdriver):
     permacom = []
+    counter = 0
+    endhash = 0
+    hashcounter = 0
     fulllikes = 0
     videocounter = 0
     scan = ''
@@ -316,7 +319,7 @@ def JSONcreator(cdriver):
 
     JSONopen = open('data.json', 'r', encoding='utf-8')
     JSONj = json.load(JSONopen)
-    JSONscrapper = JSONj['SCRAPPER']
+    JSONscrapper = JSONj['SCRAPER']
 
     # Zapytanie do uzytkownika ile hashtagow chce przeskanowac
     print('')
@@ -435,6 +438,7 @@ def JSONcreator(cdriver):
             for hc in hcomment:
                 hc = hc.text
                 if hc.startswith("#"):
+                    counter = counter + 1
                     permacom.append(hc)
 
             time.sleep(1)
@@ -447,9 +451,22 @@ def JSONcreator(cdriver):
             r = r + 1
 
             permacom = list(dict.fromkeys(permacom))
-            print('Dodatkowych hashtagow: ', len(permacom))
+            hashcounter = hashcounter + counter
+            endhash = endhash + counter
+            print('Dodatkowych hashtagow: ', counter)
+            counter = 0
 
         # Druga petla
+
+        print('')
+        print('RAZEM: ' + str(endhash))
+
+        JSONprimary = '{"HASH": "' + hashtag + '", "ADDITIONAL_HASHTAGS": "' + str(endhash) + '", "HEARTS": "' + str(sumlikes) + '"}'
+        if j < int(scan) and j != int(scan):
+            JSONprimary = JSONprimary + JSONnext
+
+        JSONplus = JSONplus + JSONprimary
+        endhash = 0
 
         fulllikes = fulllikes + sumlikes
         sumlikes = sumlikes / (9 - videoloop)
@@ -472,11 +489,18 @@ def JSONcreator(cdriver):
     print('')
     print('Ilosc filmikow w wyszukiwaniach: ', videocounter)
     print('')
-    print('Ostateczna liczba dodatkowych hashtagow: ', len(permacom))
+    print('Ostateczna liczba dodatkowych hashtagow: ', hashcounter)
     print('Lista w pliku otherh.txt')
     print('')
     print('========')
     print('')
+
+    JSON = JSONstarter + JSONplus + JSONend
+
+    HASHopen = open("secdata.json", "w", encoding="utf-8")
+    HASHopen.write(JSON)
+
+    HASHopen.close()
 
     txtopen = open("otherh.txt", "w", encoding="utf-8")
     for element in permacom:
