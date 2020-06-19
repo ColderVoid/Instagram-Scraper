@@ -7,7 +7,7 @@ Instagram-Scraper jest to prosty skrobak do Instagrama. Podajesz pierwszy hashta
 Skrobaka należy włączyć przez Windows Powershell w folderze projektu (powoduje to mniej błędów) oraz wpisania w Powershell komendy:
 
 ```bash
-python .\scraper.sk
+python .\scraper.py
 ```
 
 
@@ -27,7 +27,7 @@ Problem 2:
 Podczas gdy wpiszemy pierwszy target, i wyszukiwarka Instagrama nic nie znajdzie w Powershell wyświetli się błąd że nie znaleziono żadnych danych. Program trzeba uruchomić ponownie. Błąd w trakcie naprawiania.
 
 Problem 3:
-Podczas gdy ładowanie postu zajmuję więcej niż 20 sek program wyświetli błąd z za długim oczekiwaniem na post, nie zapiszą się również dane do data.json, otherh.txt oraz secdata.json. Błąd w trakcie naprawiania.
+Podczas gdy ładowanie postu zajmuję więcej niż 20 sek program wyświetli błąd z za długim oczekiwaniem na post, nie zapiszą się również dane do data.json, otherhashes.txt oraz secdata.json. Błąd w trakcie naprawiania.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
