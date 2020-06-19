@@ -379,7 +379,7 @@ def JSONcreator(cdriver):
         print('')
 
         try:
-            WebDriverWait(cdriver, 15).until(
+            WebDriverWait(cdriver, 20).until(
 
                 EC.presence_of_element_located((By.XPATH, "//div[@class = 'v1Nh3 kIKUG  _bz0w']"))
 
