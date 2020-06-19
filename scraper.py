@@ -290,7 +290,7 @@ def searcher(sdriver):
     JSON = JSONstarter + JSONplus + JSONend
 
     # Wpisanie JSON do pliku data.json
-    JSONwriter = open('data.json', 'w', encoding='utf-8')
+    JSONwriter = open('DATA/data.json', 'w', encoding='utf-8')
     JSONwriter.write(JSON)
     JSONwriter.close()
 
@@ -317,7 +317,7 @@ def JSONcreator(cdriver):
     JSONnext = ','
     JSONend = ']}'
 
-    JSONopen = open('data.json', 'r', encoding='utf-8')
+    JSONopen = open('DATA/data.json', 'r', encoding='utf-8')
     JSONj = json.load(JSONopen)
     JSONscrapper = JSONj['SCRAPER']
 
@@ -490,19 +490,19 @@ def JSONcreator(cdriver):
     print('Ilosc filmikow w wyszukiwaniach: ', videocounter)
     print('')
     print('Ostateczna liczba dodatkowych hashtagow: ', hashcounter)
-    print('Lista w pliku otherh.txt')
+    print('Lista w pliku otherhashes.txt oraz secdata.json')
     print('')
     print('========')
     print('')
 
     JSON = JSONstarter + JSONplus + JSONend
 
-    HASHopen = open("secdata.json", "w", encoding="utf-8")
+    HASHopen = open("DATA/secdata.json", "w", encoding="utf-8")
     HASHopen.write(JSON)
 
     HASHopen.close()
 
-    txtopen = open("otherh.txt", "w", encoding="utf-8")
+    txtopen = open("DATA/otherhashes.txt", "w", encoding="utf-8")
     for element in permacom:
         txtopen.write(element + ' ')
 
