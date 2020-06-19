@@ -11,6 +11,7 @@ import getpass_ak
 import numpy
 import time
 import json
+import math
 
 
 # Sprawdz czy strona dziala
@@ -242,6 +243,7 @@ def searcher(sdriver):
 
 def JSONcreator(cdriver):
     permacom = []
+    fulllikes = 0
 
     JSONopen = open('data.json', 'r', encoding='utf-8')
     JSONj = json.load(JSONopen)
@@ -295,6 +297,7 @@ def JSONcreator(cdriver):
         # TOP posty hashtagi/statystyki
         r = 0
         p = 0
+        sumlikes = 0
         j = j + 1
 
         while r < 9:
@@ -313,6 +316,11 @@ def JSONcreator(cdriver):
                 exitprogram(cdriver, reason='Za dluga odpowiedz serwera. Zamykanie...')
 
             comment = cdriver.find_elements_by_xpath("//a[@class = ' xil3i']")
+            likes = cdriver.find_element_by_xpath("//button[@class='sqdOP yWX7d     _8A5w5    ']/span[1]").text
+
+            likes = likes.replace(' ', '')
+            likes = int(likes)
+            sumlikes = sumlikes + likes
 
             hcomment = numpy.array(comment)
 
@@ -337,6 +345,14 @@ def JSONcreator(cdriver):
 
         # Druga petla
 
+        fulllikes = fulllikes + sumlikes
+        sumlikes = sumlikes / 9
+        sumlikes = math.ceil(sumlikes)
+
+        print('')
+        print('Srednia liczba serduszek pod postami: ', sumlikes)
+        print('')
+
         time.sleep(1)
         home = cdriver.find_element_by_xpath("//div[@class = 'Fifk5']")
         home.click()
@@ -345,6 +361,8 @@ def JSONcreator(cdriver):
 
     print('')
     print('========')
+    print('')
+    print('Liczba wszystkich serduszek: ', fulllikes)
     print('')
     print('Ostateczna liczba dodatkowych hashtagow: ', len(permacom))
     print('Lista w pliku otherh.txt')
