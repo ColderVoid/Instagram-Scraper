@@ -1,3 +1,36 @@
+"""
+
+MIT License
+
+Copyright (c) 2020 Jakub aka ColderVoid
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+========= KONIEC NUDNYCH LICENCJI ==========
+
+Telegram: https://t.me/ColderVoid
+Discord: ColderVoid#6176
+
+Wersja: W sumie nie śledze tego.. Jakaś jedna z pierwszych
+
+"""
+
 # from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
@@ -6,6 +39,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium import webdriver
+from datetime import datetime
 import urllib.request
 import getpass_ak
 import numpy
@@ -53,9 +87,6 @@ def getpassw(idriver):
             input2 = None
         else:
             break
-
-    # input1 = 'szubikk'
-    # input2 = ''
 
     gettosite(input1, input2, idriver)
 
@@ -122,10 +153,36 @@ def conandlog(user, passw, idriver):
         print('Podane zle haslo!')
         wrongpass(user, idriver)
 
-    print('Oczekiwanie na serwer... (10 sek)')
+    print('Oczekiwanie na komunikaty... (okolo 10 sek)')
+
+    # Szukanie okienka z zapisaniem logowania 1
 
     try:
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, 5).until(
+
+            EC.presence_of_element_located((By.XPATH, "//div[@class='pV7Qt        DPiy6            Igw0E     IwRSH    "
+                                                      "  eGOV_         _4EzTm                                         "
+                                                      "                                                               "
+                                                      "       qhGB0 ZUqME']"))
+
+        )
+
+    except NoSuchElementException:
+
+        connector(driver)
+
+    except TimeoutException:
+
+        connector(driver)
+
+    notnow = driver.find_element_by_xpath("//button[@class='sqdOP yWX7d    y3zKF     ']")
+
+    notnow.click()
+
+    # Szukanie okienka z powiadomieniem o powiadomieniach xd (po co to wgl komu nwm po co im to ale ok)
+
+    try:
+        WebDriverWait(driver, 5).until(
 
             EC.presence_of_element_located((By.XPATH, "//button[@class='aOOlW   HoLwm ']"))
 
@@ -188,7 +245,7 @@ def searcher(sdriver):
     # Wpisanie do tabeli 'searchlist' wszystkich znalezionych hasztagow
     searchlist = sdriver.find_elements(By.PARTIAL_LINK_TEXT, hashtag)
 
-    print('Znaleziono: ', len(searchlist), 'podobnych #')
+    print('Znaleziono: ', len(searchlist) - 1, 'podobnych hashtagow!')
     print('')
     print('Lista:')
     print('')
@@ -207,7 +264,7 @@ def searcher(sdriver):
         hsliced = hlist.split()
         hm = len(hsliced)
         postsnum = ''.join(hsliced[2:hm])
-        tpos = i + 1
+        tpos = i + 0
         pos = str(tpos)
 
         # Dodanie zera przed liczbami mniejszymi od 10
@@ -244,13 +301,50 @@ def searcher(sdriver):
 def JSONcreator(cdriver):
     permacom = []
     fulllikes = 0
+    videocounter = 0
+    scan = ''
+    err = 0
+    err2 = 0
+
+    now = datetime.now()
+    timestamp = now.strftime("%H:%M:%S")
+
+    JSONstarter = '{"TIMESTAMP": "' + timestamp + '","HASHTAGS_INFO":['
+    JSONplus = ''
+    JSONnext = ','
+    JSONend = ']}'
 
     JSONopen = open('data.json', 'r', encoding='utf-8')
     JSONj = json.load(JSONopen)
     JSONscrapper = JSONj['SCRAPPER']
 
+    # Zapytanie do uzytkownika ile hashtagow chce przeskanowac
+    print('')
+
+    while err2 == 0:
+        scan = input('Podaj liczbe hashtagow to przeskanowania (Maksymalna liczba: ' + str(len(JSONscrapper)) + '): ')
+
+        try:
+            scan = int(scan)
+
+        except ValueError:
+            err2 = 0
+
+        else:
+            err2 = 1
+
+    if len(JSONscrapper) >= scan > 0:
+        err = 1
+
+    while err == 0:
+        scan = input('Wprowadz liczbe wieksza od 0 oraz nie przekraczajaca liczby ' + str(len(JSONscrapper)) + ': ')
+        scan = int(scan)
+
+        if len(JSONscrapper) >= scan > 0:
+            break
+
     j = 0
-    while j < 2:
+    while j < scan:
         time.sleep(2)
         Nsearch = cdriver.find_element_by_xpath("//input[@type = 'text']")
 
@@ -296,8 +390,8 @@ def JSONcreator(cdriver):
 
         # TOP posty hashtagi/statystyki
         r = 0
-        p = 0
         sumlikes = 0
+        videoloop = 0
         j = j + 1
 
         while r < 9:
@@ -316,10 +410,24 @@ def JSONcreator(cdriver):
                 exitprogram(cdriver, reason='Za dluga odpowiedz serwera. Zamykanie...')
 
             comment = cdriver.find_elements_by_xpath("//a[@class = ' xil3i']")
-            likes = cdriver.find_element_by_xpath("//button[@class='sqdOP yWX7d     _8A5w5    ']/span[1]").text
 
-            likes = likes.replace(' ', '')
-            likes = int(likes)
+            try:
+                WebDriverWait(cdriver, 3).until(
+
+                    EC.presence_of_element_located((By.XPATH, "//button[@class='sqdOP yWX7d     _8A5w5    ']/span[1]"))
+
+                )
+
+            except TimeoutException:
+                likes = 0
+                videocounter = videocounter + 1
+                videoloop = videoloop + 1
+
+            else:
+                likes = cdriver.find_element_by_xpath("//button[@class='sqdOP yWX7d     _8A5w5    ']/span[1]").text
+                likes = likes.replace(' ', '')
+                likes = int(likes)
+
             sumlikes = sumlikes + likes
 
             hcomment = numpy.array(comment)
@@ -337,16 +445,14 @@ def JSONcreator(cdriver):
                                                    " TxciK yiMZG']/button[@class='wpO6b ' and 1]")
             ESCdiv.click()
             r = r + 1
-            p = p + 1
 
             permacom = list(dict.fromkeys(permacom))
-            permahash = len(permacom)
-            print('Dodatkowych hashtagow: ', permahash)
+            print('Dodatkowych hashtagow: ', len(permacom))
 
         # Druga petla
 
         fulllikes = fulllikes + sumlikes
-        sumlikes = sumlikes / 9
+        sumlikes = sumlikes / (9 - videoloop)
         sumlikes = math.ceil(sumlikes)
 
         print('')
@@ -364,6 +470,8 @@ def JSONcreator(cdriver):
     print('')
     print('Liczba wszystkich serduszek: ', fulllikes)
     print('')
+    print('Ilosc filmikow w wyszukiwaniach: ', videocounter)
+    print('')
     print('Ostateczna liczba dodatkowych hashtagow: ', len(permacom))
     print('Lista w pliku otherh.txt')
     print('')
@@ -376,7 +484,7 @@ def JSONcreator(cdriver):
 
     txtopen.close()
 
-    exitprogram(cdriver, reason='Koniec programu beta. Zamykanie...')
+    exitprogram(cdriver, reason='Koniec programu. Zamykanie...')
 
 
 #
