@@ -1,3 +1,4 @@
+import sys
 """
 
 MIT License
@@ -213,7 +214,7 @@ def exitprogram(idriver, reason):
     print('')
     print('')
     print(reason)
-    exit()
+    sys.exit()
 
 
 #
