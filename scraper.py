@@ -1,4 +1,3 @@
-import sys
 """
 
 MIT License
