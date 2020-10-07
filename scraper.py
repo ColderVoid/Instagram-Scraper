@@ -47,6 +47,7 @@ import numpy
 import time
 import json
 import math
+import sys
 
 
 # Sprawdz czy strona dziala
